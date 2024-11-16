@@ -1,11 +1,34 @@
-from pydantic import BaseModel
+from enum import Enum
+from pydantic import BaseModel, Field, HttpUrl
+from typing import List
+
+class GenreEnum(str, Enum):
+    ACTION = "Ação"
+    ADVENTURE = "Aventura"
+    HORROR = "Terror"
+    FIGHTING = "Luta"
+    RPG = "RPG"
+    SPORTS = "Esportes"
+    STRATEGY = "Estratégia"
+    PUZZLE = "Quebra-cabeça"
+    # Adicione outros gêneros conforme necessário
+
+class PlatformEnum(str, Enum):
+    PC = "PC"
+    PS4 = "PS4"
+    PS5 = "PS5"
+    XBOX_ONE = "Xbox One"
+    XBOX_SERIES_X = "Xbox Series X"
+    NINTENDO_SWITCH = "Nintendo Switch"
+    # Adicione outras plataformas conforme necessário
 
 class GameBase(BaseModel):
     title: str
     description: str
     price: float
-    genre: str
-    platform: str
+    image_url: HttpUrl  # Novo campo adicionado
+    genres: List[GenreEnum] = Field(default_factory=list)
+    platforms: List[PlatformEnum] = Field(default_factory=list)
 
 class GameCreate(GameBase):
     pass

@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from .. import schemas, crud, models
-from ..database import SessionLocal, engine
-
-models.Base.metadata.create_all(bind=engine)
+from ..database import SessionLocal
 
 router = APIRouter()
 
@@ -14,12 +13,12 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/games/", response_model=list[schemas.Game])
-def read_games(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    games = crud.get_games(db, skip=skip, limit=limit)
+@router.get("/games", response_model=List[schemas.Game])
+def read_games(skip: int = 0, limit: int = 100, genre: Optional[str] = None, platform: Optional[str] = None, db: Session = Depends(get_db)):
+    games = crud.get_games(db, skip=skip, limit=limit, genre=genre, platform=platform)
     return games
 
-@router.post("/games/", response_model=schemas.Game)
+@router.post("/games", response_model=schemas.Game)
 def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
     return crud.create_game(db=db, game=game)
 
