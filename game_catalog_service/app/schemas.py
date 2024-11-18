@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, Field, HttpUrl
-from typing import List
+from typing import List, Optional
 
 class GenreEnum(str, Enum):
     ACTION = "Ação"
@@ -38,3 +38,11 @@ class Game(GameBase):
 
     class Config:
         from_attributes = True
+
+class GameUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    image_url: Optional[HttpUrl] = None
+    genres: Optional[List[GenreEnum]] = None
+    platforms: Optional[List[PlatformEnum]] = None

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { GameContext } from '../context/GameContext';
 
 const HeaderContainer = styled.header`
   background-color: #1e1e1e;
@@ -23,14 +24,38 @@ const NavLinks = styled.nav`
   }
 `;
 
-const Header = () => (
-  <HeaderContainer>
-    <Logo>SteamVermelha</Logo>
-    <NavLinks>
-      <Link to="/">Home</Link>
-      {/* Adicione mais links se necessário */}
-    </NavLinks>
-  </HeaderContainer>
-);
+const SearchInput = styled.input`
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: none;
+  outline: none;
+  font-size: 1em;
+`;
+
+const Header = () => {
+  const [inputValue, setInputValue] = useState('');
+  const { setSearchTerm } = useContext(GameContext);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+    setSearchTerm(value);
+  };
+
+  return (
+    <HeaderContainer>
+      <Logo>Dark Steam</Logo>
+      <NavLinks>
+        <Link to="/">Home</Link>
+      </NavLinks>
+      <SearchInput
+        type="text"
+        placeholder="Buscar jogos..."
+        value={inputValue}
+        onChange={handleInputChange}
+      />
+    </HeaderContainer>
+  );
+};
 
 export default Header;

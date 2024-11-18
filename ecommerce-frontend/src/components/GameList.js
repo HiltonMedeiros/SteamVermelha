@@ -46,6 +46,13 @@ const GameCard = styled.div`
   }
 `;
 
+const GameImage = styled.img`
+  width: 100%;
+  height: 250px; /* Ajuste a altura conforme necessário */
+  object-fit: contain;
+  background-color: #000; /* Opcional: cor de fundo para preencher espaço vazio */
+`;
+
 const PriceTag = styled.p`
   font-weight: bold;
   color: #00b894;
@@ -59,7 +66,7 @@ const GameList = () => {
       {games.map((game) => (
         <GameCard key={game.id}>
           <Link to={`/games/${game.id}`}>
-            <img src={game.image_url} alt={game.title} />
+            <GameImage src={game.image_url} alt={game.title} />
             <h2>{game.title}</h2>
           </Link>
           <PriceTag>
