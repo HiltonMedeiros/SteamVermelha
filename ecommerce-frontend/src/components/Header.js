@@ -47,6 +47,7 @@ const Header = () => {
       <Logo>Dark Steam</Logo>
       <NavLinks>
         <Link to="/">Home</Link>
+        <Link to="/cart">Carrinho</Link>
       </NavLinks>
       <SearchInput
         type="text"

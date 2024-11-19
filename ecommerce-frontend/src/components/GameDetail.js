@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api';
 import styled from 'styled-components';
+import { CartContext } from '../context/CartContext';
 
 const GameDetailContainer = styled.div`
   display: flex;
@@ -61,9 +62,20 @@ const GameDescription = styled.p`
   text-align: center;
 `;
 
+const AddToCartButton = styled.button`
+  padding: 10px 20px;
+  background-color: #00b894;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+`;
+
 const GameDetail = () => {
   const { id } = useParams();
   const [game, setGame] = useState(null);
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -81,6 +93,16 @@ const GameDetail = () => {
   if (!game) {
     return <div>Carregando...</div>;
   }
+
+  const handleAddToCart = () => {
+    const cartItem = {
+      game_id: game.id,
+      title: game.title,
+      price: game.price,
+      quantity: 1,
+    };
+    addToCart(cartItem);
+  };
 
   return (
     <GameDetailContainer>
@@ -100,6 +122,7 @@ const GameDetail = () => {
         </GenresPlatforms>
         <GameDescription>{game.description}</GameDescription>
       </InfoContainer>
+      <AddToCartButton onClick={handleAddToCart}>Adicionar ao Carrinho</AddToCartButton>
     </GameDetailContainer>
   );
 };
