@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import debounce from 'lodash.debounce';
-import api from '../api';
+import { api } from '../api'; // Importar api corretamente
 
 export const GameContext = createContext();
 

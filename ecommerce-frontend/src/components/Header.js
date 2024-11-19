@@ -47,6 +47,8 @@ const Header = () => {
       <Logo>Dark Steam</Logo>
       <NavLinks>
         <Link to="/">Home</Link>
+        <Link to="/login">Login</Link>
+        <Link to="/admin">Admin</Link>
       </NavLinks>
       <SearchInput
         type="text"

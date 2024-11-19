@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../api';
+import { api } from '../api'; // Importar api corretamente
 import styled from 'styled-components';
 
 const GameDetailContainer = styled.div`
