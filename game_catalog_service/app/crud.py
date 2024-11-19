@@ -143,3 +143,54 @@ def delete_game(db: Session, game_id: int):
     db.delete(db_game)
     db.commit()
     return db_game
+
+def patch_game(db: Session, game_id: int, game_update: schemas.GameUpdate):
+    db_game = db.query(models.Game).filter(models.Game.id == game_id).first()
+    if not db_game:
+        return None
+
+    # Obter apenas os campos fornecidos na requisição
+    update_data = game_update.model_dump(exclude_unset=True)
+
+    # Atualizar campos simples
+    if 'title' in update_data:
+        db_game.title = update_data['title']
+    if 'description' in update_data:
+        db_game.description = update_data['description']
+    if 'price' in update_data:
+        db_game.price = update_data['price']
+    if 'image_url' in update_data:
+        db_game.image_url = str(update_data['image_url'])
+
+    # Atualizar gêneros
+    if 'genres' in update_data:
+        db_game.genres.clear()
+        for genre_name in update_data['genres']:
+            genre = db.query(models.Genre).filter(models.Genre.name == genre_name.value).first()
+            if not genre:
+                genre = models.Genre(name=genre_name.value)
+                db.add(genre)
+            db_game.genres.append(genre)
+
+    # Atualizar plataformas
+    if 'platforms' in update_data:
+        db_game.platforms.clear()
+        for platform_name in update_data['platforms']:
+            platform = db.query(models.Platform).filter(models.Platform.name == platform_name.value).first()
+            if not platform:
+                platform = models.Platform(name=platform_name.value)
+                db.add(platform)
+            db_game.platforms.append(platform)
+
+    db.commit()
+    db.refresh(db_game)
+
+    return schemas.Game(
+        id=db_game.id,
+        title=db_game.title,
+        description=db_game.description,
+        price=db_game.price,
+        image_url=db_game.image_url,
+        genres=[genre.name for genre in db_game.genres],
+        platforms=[platform.name for platform in db_game.platforms]
+    )

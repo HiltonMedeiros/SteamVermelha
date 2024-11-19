@@ -56,3 +56,14 @@ def delete_game(game_id: int, db: Session = Depends(get_db)):
     if db_game is None:
         raise HTTPException(status_code=404, detail="Game not found")
     return db_game
+
+@router.patch("/games/{game_id}", response_model=schemas.Game)
+def patch_game(
+    game_id: int,
+    game_update: schemas.GameUpdate,
+    db: Session = Depends(get_db)
+):
+    db_game = crud.patch_game(db, game_id=game_id, game_update=game_update)
+    if db_game is None:
+        raise HTTPException(status_code=404, detail="Game not found")
+    return db_game

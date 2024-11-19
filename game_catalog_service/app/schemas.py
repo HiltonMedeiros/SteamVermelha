@@ -11,6 +11,11 @@ class GenreEnum(str, Enum):
     SPORTS = "Esportes"
     STRATEGY = "Estratégia"
     PUZZLE = "Quebra-cabeça"
+    SHOOTER = "Tiro"
+    MULTIPLAYER = "Multijogador"
+    ONLINE = "Online"
+    MOBA = "MOBA"
+    FREE = "Grátis"
     # Adicione outros gêneros conforme necessário
 
 class PlatformEnum(str, Enum):
