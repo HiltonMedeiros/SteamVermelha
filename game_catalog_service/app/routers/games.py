@@ -21,10 +21,12 @@ def read_games(
     genre: Optional[str] = None,
     platform: Optional[str] = None,
     search_term: Optional[str] = None,
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     games = crud.get_games(
         db,
+        user_id=current_user['id'],
         skip=skip,
         limit=limit,
         genre=genre,
@@ -39,9 +41,7 @@ def create_game(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    if not current_user.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Permissão negada")
-    return crud.create_game(db=db, game=game)
+    return crud.create_game(db=db, game=game, user_id=current_user['id'])
 
 @router.get("/games/{game_id}", response_model=schemas.Game)
 def read_game(game_id: int, db: Session = Depends(get_db)):
@@ -57,8 +57,6 @@ def update_game(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    if not current_user.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Permissão negada")
     return crud.update_game(db=db, game_id=game_id, game_update=game_update)
 
 @router.delete("/games/{game_id}", response_model=schemas.Game)
@@ -67,8 +65,6 @@ def delete_game(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    if not current_user.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Permissão negada")
     return crud.delete_game(db=db, game_id=game_id)
 
 @router.patch("/games/{game_id}", response_model=schemas.Game)

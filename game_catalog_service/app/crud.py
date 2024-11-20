@@ -143,7 +143,15 @@ def delete_game(db: Session, game_id: int):
         return None
     db.delete(db_game)
     db.commit()
-    return db_game
+    return schemas.Game(
+        id=db_game.id,
+        title=db_game.title,
+        description=db_game.description,
+        price=db_game.price,
+        image_url=db_game.image_url,
+        genres=[genre.name for genre in db_game.genres],
+        platforms=[platform.name for platform in db_game.platforms]
+    )
 
 def patch_game(db: Session, game_id: int, game_update: schemas.GameUpdate):
     db_game = db.query(models.Game).filter(models.Game.id == game_id).first()

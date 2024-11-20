@@ -4,7 +4,7 @@ import requests
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="http://localhost:8001/token")
 
-AUTH_SERVICE_URL = "http://localhost:8001"  # URL do serviço de autenticação
+AUTH_SERVICE_URL = "http://localhost:8001"  # Certifique-se de que este é o URL correto do auth_service
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     if not token:

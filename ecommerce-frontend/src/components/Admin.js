@@ -36,6 +36,14 @@ function Admin() {
   const handleCreateGame = async (e) => {
     e.preventDefault();
     try {
+      console.log('Dados enviados:', {
+        title,
+        description,
+        price: parseFloat(price),
+        image_url: imageUrl,
+        genres,
+        platforms,
+      });
       await api.post('/games', {
         title,
         description,
@@ -46,7 +54,8 @@ function Admin() {
       });
       window.location.reload();
     } catch (error) {
-      setError('Erro ao criar jogo');
+      console.error('Erro ao criar jogo:', error.response || error.message);
+      setError('Erro ao criar jogo: ' + (error.response?.data?.detail || error.message));
     }
   };
 

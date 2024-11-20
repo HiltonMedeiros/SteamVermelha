@@ -13,6 +13,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
+      // Verifique se o token está correto e não contém caracteres indesejados
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;

@@ -1,12 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 from app import models
 
 from .. import schemas, crud, auth
 from ..database import get_db
 from passlib.hash import bcrypt
+from jose import JWTError
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 router = APIRouter()
 
@@ -29,5 +32,15 @@ def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/verify-token")
-def verify_token(current_user: models.User = Depends(auth.get_current_user)):
-    return {"username": current_user.username, "is_admin": current_user.is_admin}
+def verify_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    try:
+        payload = auth.decode_access_token(token)
+        username = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Token inválido")
+        user = crud.get_user_by_username(db, username=username)
+        if user is None:
+            raise HTTPException(status_code=401, detail="Usuário não encontrado")
+        return {"id": user.id, "username": user.username}
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token inválido")
