@@ -16,6 +16,7 @@ function Login() {
         password,
       }));
       localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('username', username); // Armazenar o nome do usuário
       // Redirecionar ou atualizar a página
       window.location.href = '/';
     } catch (error) {

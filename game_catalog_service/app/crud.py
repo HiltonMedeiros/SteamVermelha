@@ -9,7 +9,7 @@ def get_game(db: Session, game_id: int):
             title=db_game.title,
             description=db_game.description,
             price=db_game.price,
-            image_url=db_game.image_url,  # Novo campo adicionado
+            image_url=db_game.image_url,
             genres=[genre.name for genre in db_game.genres],
             platforms=[platform.name for platform in db_game.platforms]
         )
@@ -17,13 +17,14 @@ def get_game(db: Session, game_id: int):
 
 def get_games(
     db: Session,
+    user_id: int,
     skip: int = 0,
     limit: int = 100,
     genre: str = None,
     platform: str = None,
     search_term: str = None
 ):
-    query = db.query(models.Game)
+    query = db.query(models.Game).filter(models.Game.user_id == user_id)
     
     if genre:
         query = query.join(models.Game.genres).filter(models.Genre.name == genre)
@@ -42,19 +43,20 @@ def get_games(
             title=game.title,
             description=game.description,
             price=game.price,
-            image_url=game.image_url,  # Novo campo adicionado
+            image_url=game.image_url,
             genres=[genre.name for genre in game.genres],
             platforms=[platform.name for platform in game.platforms]
         )
         for game in db_games
     ]
 
-def create_game(db: Session, game: schemas.GameCreate):
+def create_game(db: Session, game: schemas.GameCreate, user_id: int):
     db_game = models.Game(
         title=game.title,
         description=game.description,
         price=game.price,
-        image_url=str(game.image_url)  # Converter para string
+        image_url=str(game.image_url),
+        user_id=user_id
     )
 
     # Adicionar gêneros
@@ -86,7 +88,7 @@ def create_game(db: Session, game: schemas.GameCreate):
         title=db_game.title,
         description=db_game.description,
         price=db_game.price,
-        image_url=db_game.image_url,  # Novo campo adicionado
+        image_url=db_game.image_url,
         genres=[genre.name for genre in db_game.genres],
         platforms=[platform.name for platform in db_game.platforms]
     )
@@ -125,7 +127,6 @@ def update_game(db: Session, game_id: int, game_update: schemas.GameUpdate):
     db.commit()
     db.refresh(db_game)
 
-    # Retornar uma instância de schemas.Game
     return schemas.Game(
         id=db_game.id,
         title=db_game.title,

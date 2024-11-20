@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -25,8 +25,10 @@ class Game(Base):
     title = Column(String, index=True)
     description = Column(String)
     price = Column(Float)
-    image_url = Column(String)  # Novo campo adicionado
+    image_url = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))  # Novo campo adicionado
 
+    user = relationship('User', back_populates='games')
     genres = relationship(
         'Genre',
         secondary=game_genres,
@@ -37,6 +39,16 @@ class Game(Base):
         secondary=game_platforms,
         back_populates='games'
     )
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    is_admin = Column(Boolean, default=False)
+
+    games = relationship('Game', back_populates='user')
 
 class Genre(Base):
     __tablename__ = 'genres'

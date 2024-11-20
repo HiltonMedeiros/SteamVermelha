@@ -1,14 +1,23 @@
 // src/components/Admin.js
 import React, { useState, useEffect } from 'react';
-import { api } from '../api'; // Importar api corretamente
+import { api } from '../api';
+
+const genresEnum = [
+  "Ação", "Aventura", "Terror", "Luta", "RPG", "Esportes", "Estratégia", "Quebra-cabeça", "Tiro", "Multijogador", "Online", "MOBA", "Grátis"
+];
+
+const platformsEnum = [
+  "PC", "PS4", "PS5", "Xbox One", "Xbox Series X", "Nintendo Switch"
+];
 
 function Admin() {
   const [games, setGames] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [genres, setGenres] = useState('');
-  const [platforms, setPlatforms] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [genres, setGenres] = useState([]);
+  const [platforms, setPlatforms] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -31,8 +40,9 @@ function Admin() {
         title,
         description,
         price: parseFloat(price),
-        genres: genres.split(',').map((genre) => genre.trim()),
-        platforms: platforms.split(',').map((platform) => platform.trim()),
+        image_url: imageUrl,
+        genres,
+        platforms,
       });
       window.location.reload();
     } catch (error) {
@@ -46,6 +56,15 @@ function Admin() {
       setGames(games.filter((game) => game.id !== id));
     } catch (error) {
       console.error('Erro ao deletar jogo:', error);
+    }
+  };
+
+  const handleCheckboxChange = (e, setState, state) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setState([...state, value]);
+    } else {
+      setState(state.filter((item) => item !== value));
     }
   };
 
@@ -78,20 +97,38 @@ function Admin() {
           />
         </div>
         <div>
-          <label>Gêneros (separados por vírgula):</label>
+          <label>URL da Imagem:</label>
           <input
             type="text"
-            value={genres}
-            onChange={(e) => setGenres(e.target.value)}
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
           />
         </div>
         <div>
-          <label>Plataformas (separadas por vírgula):</label>
-          <input
-            type="text"
-            value={platforms}
-            onChange={(e) => setPlatforms(e.target.value)}
-          />
+          <label>Gêneros:</label>
+          {genresEnum.map((genre) => (
+            <div key={genre}>
+              <input
+                type="checkbox"
+                value={genre}
+                onChange={(e) => handleCheckboxChange(e, setGenres, genres)}
+              />
+              <label>{genre}</label>
+            </div>
+          ))}
+        </div>
+        <div>
+          <label>Plataformas:</label>
+          {platformsEnum.map((platform) => (
+            <div key={platform}>
+              <input
+                type="checkbox"
+                value={platform}
+                onChange={(e) => handleCheckboxChange(e, setPlatforms, platforms)}
+              />
+              <label>{platform}</label>
+            </div>
+          ))}
         </div>
         {error && <p>{error}</p>}
         <button type="submit">Criar Jogo</button>
